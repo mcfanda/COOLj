@@ -1,0 +1,41 @@
+---
+
+name:  myRegression
+title: Regression analysis
+menuGroup: COOLj
+version: '1.0.0'
+jas: '1.2'
+options:
+    - name: data
+      type: Data
+      
+    - name: dep
+      title: Dependent Variable
+      type: Variable
+      permitted:
+        - numeric
+      
+    - name: covs
+      title: Covariates
+      type: Variables
+      suggested:
+        - continuous
+        - ordinal
+      permitted:
+        - numeric
+
+    - name: show_means
+      title: Show Means
+      type: Bool
+      default: false
+
+    - name: show_ci
+      title: ES CI
+      type: Bool
+      default: false
+
+      
+
+
+
+...

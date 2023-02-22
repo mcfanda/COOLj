@@ -1,0 +1,21 @@
+---
+title: Simple example of jmvScaffold
+name: COOLj
+version: 0.0.1
+jms: '1.0'
+authors:
+  - mcfanda
+maintainer: Mcfanda <yourself@somewhere.net>
+date: '1970-01-01'
+type: R
+description: This is an example of jmvScaffold
+analyses:
+  - title: Regression analysis
+    name: myRegression
+    ns: COOLj
+    menuGroup: COOLj
+    menuTitle: Regression analysis
+usesNative: true
+minApp: 2.3.12
+
+...
