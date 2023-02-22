@@ -1,6 +1,3 @@
-
-
-
 myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     "myRegressionClass",
     inherit = myRegressionBase,
