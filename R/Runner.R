@@ -131,7 +131,7 @@ Runner <- R6::R6Class(
                    data.frame(var=x,mean=m,sd=s)
       })
       attr(tabs,"keys")<- whichcovs
-      self$dispatcher$warnings<-list(topic="sig_means_Extraversion",message="In particular to Extraversion")
+      self$dispatcher$warnings<-list(topic="sig_means_1",message="In particular to the first")
       
       warning("something happens in the sig means")
       

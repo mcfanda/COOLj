@@ -102,16 +102,37 @@ Dispatch <- R6::R6Class(
                         inc   <- 0
                         tableobj<-self$tables
                         found<-FALSE
+                        
+                        tableobj<-self$tables
+                        found<-FALSE
+                        for (aname in path) {
+                          
+                          if (!is.na(as.integer(aname))) 
+                             aname<-names(tableobj)[[as.integer(aname)]]
+                          
+                          if (hasName(tableobj,aname)) {
+                            inc<-inc+1
+                            tableobj<-tableobj[[aname]]
+                          }
+                        }
+                        if (inc==check)
+                          return(tableobj)
+                        else
+                          return(NULL)
+                        
+                        
+                        
                         for (aname in path) {
 
                            goodnames<-gsub('\"',"",names(tableobj),fixed = T)
                            test<-which(goodnames==aname)
+                           mark(goodnames,test)
                            if (length(test)==1) {
                                    inc<-inc+1
                                    tableobj<-tableobj[[names(tableobj)[[test]]]]
                                 }
                         }
-                        if (inc>0)
+                        if (inc==check)
                              return(tableobj)
                         else
                              return(NULL)
