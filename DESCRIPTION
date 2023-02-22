@@ -1,0 +1,12 @@
+Package: COOLj
+Type: Package
+Title: Simple example of jmvScaffold
+Version: 0.0.1
+Author: mcfanda
+Maintainer: Mcfanda <yourself@somewhere.net>
+Description: This is an example of
+    jmvScaffold
+License: GPL
+Encoding: UTF-8
+LazyData: true
+Imports: jmvcore (>= 0.8.5), R6, effectsize
