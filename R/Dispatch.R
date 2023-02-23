@@ -49,15 +49,8 @@ Dispatch <- R6::R6Class(
                                 }
                           
                                init<-(hasName(obj,"initOnly") && obj[["initOnly"]]) 
-                               
-                               if (inherits(table, "Table")) {
-                                     table$setNote(obj$key,obj$message,init=init)
-                                     return()
-                               }
-                               if (inherits(table, "Array")) {
-                                 for (one in table$items) one$setNote(obj$key,obj$message,init=init)
-                                 return()
-                               }
+                               table$setNote(obj$key,obj$message,init=init)
+                              
                                
                                
                                
@@ -97,24 +90,18 @@ Dispatch <- R6::R6Class(
                       .errors=list(),
                       .find_table=function(path) {
                         
-                        ginfo("finding path")
-                        check <- length(path)
-                        inc   <- 0
                         tableobj<-self$tables
                         found<-FALSE
-                        for (aname in path) {
-
-                           goodnames<-gsub('\"',"",names(tableobj),fixed = T)
-                           test<-which(goodnames==aname)
-                           if (length(test)==1) {
-                                   inc<-inc+1
-                                   tableobj<-tableobj[[names(tableobj)[[test]]]]
-                                }
-                        }
-                        if (inc>0)
+                        for (aname in path)
+                          if (hasName(tableobj,aname)) {
+                            found<-TRUE
+                            tableobj<-tableobj[[aname]]
+                          }
+                        if (found)
                              return(tableobj)
                         else
                              return(NULL)
+                        
                       },
                       .translate=function(msg) {
       

@@ -7,9 +7,7 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
     public = list(
         initialize = function(
             dep = NULL,
-            covs = NULL,
-            show_means = FALSE,
-            show_ci = FALSE, ...) {
+            covs = NULL, ...) {
 
             super$initialize(
                 package="COOLj",
@@ -30,41 +28,23 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                     "ordinal"),
                 permitted=list(
                     "numeric"))
-            private$..show_means <- jmvcore::OptionBool$new(
-                "show_means",
-                show_means,
-                default=FALSE)
-            private$..show_ci <- jmvcore::OptionBool$new(
-                "show_ci",
-                show_ci,
-                default=FALSE)
 
             self$.addOption(private$..dep)
             self$.addOption(private$..covs)
-            self$.addOption(private$..show_means)
-            self$.addOption(private$..show_ci)
         }),
     active = list(
         dep = function() private$..dep$value,
-        covs = function() private$..covs$value,
-        show_means = function() private$..show_means$value,
-        show_ci = function() private$..show_ci$value),
+        covs = function() private$..covs$value),
     private = list(
         ..dep = NA,
-        ..covs = NA,
-        ..show_means = NA,
-        ..show_ci = NA)
+        ..covs = NA)
 )
 
 myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "myRegressionResults",
     inherit = jmvcore::Group,
     active = list(
-        main = function() private$.items[["main"]],
-        additional = function() private$.items[["additional"]],
-        means = function() private$.items[["means"]],
-        sig = function() private$.items[["sig"]],
-        correlations = function() private$.items[["correlations"]]),
+        coefficients = function() private$.items[["coefficients"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -72,191 +52,33 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                 options=options,
                 name="",
                 title="Regression analysis")
-            self$add(R6::R6Class(
-                inherit = jmvcore::Group,
-                active = list(
-                    coefficients = function() private$.items[["coefficients"]],
-                    anova = function() private$.items[["anova"]]),
-                private = list(),
-                public=list(
-                    initialize=function(options) {
-                        super$initialize(
-                            options=options,
-                            name="main",
-                            title="Main Results")
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="coefficients",
-                            title="Parameter Estimates (Coefficients)",
-                            clearWith=list(
-                                "dep",
-                                "covs"),
-                            columns=list(
-                                list(
-                                    `name`="var", 
-                                    `title`="Variable", 
-                                    `type`="text"),
-                                list(
-                                    `name`="coef", 
-                                    `title`="Estimate", 
-                                    `type`="number"),
-                                list(
-                                    `name`="se", 
-                                    `title`="SE", 
-                                    `type`="number"),
-                                list(
-                                    `name`="t", 
-                                    `title`="t", 
-                                    `type`="number", 
-                                    `format`="zto"),
-                                list(
-                                    `name`="p", 
-                                    `title`="p", 
-                                    `type`="number", 
-                                    `format`="zto,pvalue"))))
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="anova",
-                            title="ANOVA table",
-                            clearWith=list(
-                                "dep",
-                                "covs"),
-                            columns=list(
-                                list(
-                                    `name`="var", 
-                                    `title`="Variable", 
-                                    `type`="text"),
-                                list(
-                                    `name`="test", 
-                                    `title`="F-test", 
-                                    `type`="number", 
-                                    `format`="zto"),
-                                list(
-                                    `name`="df1", 
-                                    `title`="df", 
-                                    `type`="integer"),
-                                list(
-                                    `name`="df2", 
-                                    `title`="dfres", 
-                                    `type`="integer"),
-                                list(
-                                    `name`="p", 
-                                    `title`="p", 
-                                    `type`="number", 
-                                    `format`="zto,pvalue"))))}))$new(options=options))
-            self$add(R6::R6Class(
-                inherit = jmvcore::Group,
-                active = list(
-                    effects = function() private$.items[["effects"]]),
-                private = list(),
-                public=list(
-                    initialize=function(options) {
-                        super$initialize(
-                            options=options,
-                            name="additional",
-                            title="Additional Results")
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="effects",
-                            title="Effect Size Indices",
-                            visible=TRUE,
-                            columns=list(
-                                list(
-                                    `name`="var", 
-                                    `title`="Variable", 
-                                    `type`="text", 
-                                    `combineBelow`=TRUE),
-                                list(
-                                    `name`="index", 
-                                    `title`="Index", 
-                                    `type`="text"),
-                                list(
-                                    `name`="value", 
-                                    `title`="Value", 
-                                    `type`="number", 
-                                    `format`="zto"),
-                                list(
-                                    `name`="es_ci_lower", 
-                                    `title`="Lower", 
-                                    `type`="number", 
-                                    `visible`="(show_ci)"),
-                                list(
-                                    `name`="es_ci_upper", 
-                                    `title`="Upper", 
-                                    `type`="number", 
-                                    `visible`="(show_ci)"))))}))$new(options=options))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="means",
-                title="Mean and Standard deviation",
-                items="(covs)",
-                clearWith=list(
-                    "dep",
-                    "covs"),
-                template=jmvcore::Table$new(
-                    options=options,
-                    title="Variable - $key",
-                    clearWith=list(
-                        "dep",
-                        "covs"),
-                    columns=list(
-                        list(
-                            `name`="var", 
-                            `title`="Variable", 
-                            `type`="text"),
-                        list(
-                            `name`="mean", 
-                            `title`="Mean", 
-                            `type`="number"),
-                        list(
-                            `name`="sd", 
-                            `title`="Sd", 
-                            `type`="number")))))
-            self$add(R6::R6Class(
-                inherit = jmvcore::Group,
-                active = list(
-                    means = function() private$.items[["means"]]),
-                private = list(),
-                public=list(
-                    initialize=function(options) {
-                        super$initialize(
-                            options=options,
-                            name="sig",
-                            title="Significant covariates")
-                        self$add(jmvcore::Array$new(
-                            options=options,
-                            name="means",
-                            title="",
-                            visible="(show_means)",
-                            template=jmvcore::Table$new(
-                                options=options,
-                                title="Variable - $key",
-                                clearWith=list(
-                                    "dep",
-                                    "covs"),
-                                columns=list(
-                                    list(
-                                        `name`="var", 
-                                        `title`="Variable", 
-                                        `type`="text"),
-                                    list(
-                                        `name`="mean", 
-                                        `title`="Mean", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="sd", 
-                                        `title`="Sd", 
-                                        `type`="number")))))}))$new(options=options))
             self$add(jmvcore::Table$new(
                 options=options,
-                name="correlations",
-                title="Correlations",
-                visible=TRUE,
+                name="coefficients",
+                title="Parameter Estimates (Coefficients)",
                 columns=list(
                     list(
                         `name`="var", 
                         `title`="Variable", 
-                        `type`="text"))))}))
+                        `type`="text"),
+                    list(
+                        `name`="coef", 
+                        `title`="Estimate", 
+                        `type`="number"),
+                    list(
+                        `name`="se", 
+                        `title`="SE", 
+                        `type`="number"),
+                    list(
+                        `name`="t", 
+                        `title`="t", 
+                        `type`="number", 
+                        `format`="zto"),
+                    list(
+                        `name`="p", 
+                        `title`="p", 
+                        `type`="number", 
+                        `format`="zto,pvalue"))))}))
 
 myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "myRegressionBase",
@@ -266,7 +88,7 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "COOLj",
                 name = "myRegression",
-                version = c(1,0,0),
+                version = c(0,0,1),
                 options = options,
                 results = myRegressionResults$new(options=options),
                 data = data,
@@ -284,31 +106,22 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param data .
 #' @param dep .
 #' @param covs .
-#' @param show_means .
-#' @param show_ci .
 #' @return A results object containing:
 #' \tabular{llllll}{
-#'   \code{results$main$coefficients} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$main$anova} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$additional$effects} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$means} \tab \tab \tab \tab \tab an array of tables \cr
-#'   \code{results$sig$means} \tab \tab \tab \tab \tab an array \cr
-#'   \code{results$correlations} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$coefficients} \tab \tab \tab \tab \tab a table \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$correlations$asDF}
+#' \code{results$coefficients$asDF}
 #'
-#' \code{as.data.frame(results$correlations)}
+#' \code{as.data.frame(results$coefficients)}
 #'
 #' @export
 myRegression <- function(
     data,
     dep,
-    covs,
-    show_means = FALSE,
-    show_ci = FALSE) {
+    covs) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("myRegression requires jmvcore to be installed (restart may be required)")
@@ -324,9 +137,7 @@ myRegression <- function(
 
     options <- myRegressionOptions$new(
         dep = dep,
-        covs = covs,
-        show_means = show_means,
-        show_ci = show_ci)
+        covs = covs)
 
     analysis <- myRegressionClass$new(
         options = options,

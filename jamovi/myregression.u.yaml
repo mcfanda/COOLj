@@ -2,7 +2,7 @@ title: Regression analysis
 name: myRegression
 jus: '3.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
 children:
   - type: VariableSupplier
     persistentItems: false
@@ -21,10 +21,3 @@ children:
           - type: VariablesListBox
             name: covs
             isTarget: true
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: CheckBox
-        name: show_means
-      - type: CheckBox
-        name: show_ci

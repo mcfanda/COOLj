@@ -1,11 +1,12 @@
 ---
-
 name:  myRegression
 title: Regression analysis
 menuGroup: COOLj
-version: '1.0.0'
+version: '0.0.1'
 jas: '1.2'
+
 options:
+
     - name: data
       type: Data
       
@@ -23,19 +24,5 @@ options:
         - ordinal
       permitted:
         - numeric
-
-    - name: show_means
-      title: Show Means
-      type: Bool
-      default: false
-
-    - name: show_ci
-      title: ES CI
-      type: Bool
-      default: false
-
-      
-
-
 
 ...
