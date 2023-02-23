@@ -7,7 +7,7 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         .tables=list(),
         .time=NULL,
         .init = function() {
-            ginfo("MODULE:  #### init phase start ####")
+            jinfo("MODULE:  #### init phase start ####")
             private$.time<-Sys.time()
             
             if (!is.something(self$options$dep) | !is.something(self$options$covs))
@@ -20,21 +20,26 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             # put the SmartTable in the list
             private$.tables[[length(private$.tables)+1]]<-atable
             
-            # set up the means SmartArray
-            obj<-SmartArray$new(self$results$means,private$.runner)
-            # put the SmartArray in the list
-            private$.tables[[length(private$.tables)+1]]<-obj
-            
-            # set up the means SmartArray
-            obj<-SmartArray$new(self$results$sig$means,private$.runner)
-            # put the SmartArray in the list
-            private$.tables[[length(private$.tables)+1]]<-obj
-            
             # set up the anova SmartTable
             atable<-SmartTable$new(self$results$main$anova,private$.runner)
             atable$hideOn <- list(df1=Inf)
             # put the SmartTable in the list
             private$.tables[[length(private$.tables)+1]]<-atable
+            
+            # set up the means SmartArray
+            obj<-SmartArray$new(self$results$means,private$.runner)
+            # put the SmartArray in the list
+            private$.tables[[length(private$.tables)+1]]<-obj
+
+            lapply(private$.tables,function(x) x$initTable())
+            jinfo("MODULE:  #### init phase end ####")
+            
+            # set up the means SmartArray
+            obj<-SmartArray$new(self$results$sig$means,private$.runner)
+            # put the SmartArray in the list
+            private$.tables[[length(private$.tables)+1]]<-obj
+
+            
             
             # set up the effects SmartTable
             atable<-SmartTable$new(self$results$additional$effects,private$.runner)
@@ -51,24 +56,22 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             private$.tables[[length(private$.tables)+1]]<-obj
             
             # init all tables
-            lapply(private$.tables,function(x) x$initTable())
-            ginfo("MODULE:  #### init phase end ####")
             
         },
         .run = function() {
             
             if (!is.something(self$options$dep) | !is.something(self$options$covs))
                 return()
-            ginfo("MODULE:  #### run phase start ####")
+            jinfo("MODULE:  #### run phase start ####")
             
             # estimate the model             
             private$.runner$estimate()
             # execute all SmartTable run functions             
             lapply(private$.tables,function(x) x$runTable())
             
-            ginfo("MODULE:  #### run phase end ####")
+            jinfo("MODULE:  #### run phase end ####")
             now<-Sys.time()
-            ginfo("TIME:",now-private$.time," secs")
+            jinfo("TIME:",now-private$.time," secs")
             
         }
     )

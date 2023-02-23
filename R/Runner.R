@@ -98,11 +98,14 @@ Runner <- R6::R6Class(
       whichcovs    <-   rownames(results)
   
   ## make the tables
+      
+      
       tabs<-  lapply(whichcovs, function (x) {
                  m  <- mean(self$analysis$data[[x]],na.rm=TRUE)
                  s  <- sd(self$analysis$data[[x]],na.rm=TRUE)
                  data.frame(var=x,mean=m,sd=s)
   })
+      
   attr(tabs,"keys")<- whichcovs
   warning("something happened in the run_means function")
   return(tabs)
