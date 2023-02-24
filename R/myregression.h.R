@@ -7,7 +7,8 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
     public = list(
         initialize = function(
             dep = NULL,
-            covs = NULL, ...) {
+            covs = NULL,
+            show_means = FALSE, ...) {
 
             super$initialize(
                 package="COOLj",
@@ -28,16 +29,23 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                     "ordinal"),
                 permitted=list(
                     "numeric"))
+            private$..show_means <- jmvcore::OptionBool$new(
+                "show_means",
+                show_means,
+                default=FALSE)
 
             self$.addOption(private$..dep)
             self$.addOption(private$..covs)
+            self$.addOption(private$..show_means)
         }),
     active = list(
         dep = function() private$..dep$value,
-        covs = function() private$..covs$value),
+        covs = function() private$..covs$value,
+        show_means = function() private$..show_means$value),
     private = list(
         ..dep = NA,
-        ..covs = NA)
+        ..covs = NA,
+        ..show_means = NA)
 )
 
 myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -71,9 +79,6 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="coefficients",
                             title="Parameter Estimates (Coefficients)",
-                            clearWith=list(
-                                "dep",
-                                "covs"),
                             columns=list(
                                 list(
                                     `name`="var", 
@@ -101,9 +106,6 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="anova",
                             title="ANOVA table",
-                            clearWith=list(
-                                "dep",
-                                "covs"),
                             columns=list(
                                 list(
                                     `name`="var", 
@@ -142,7 +144,7 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="effects",
                             title="Effect Size Indices",
-                            visible=TRUE,
+                            visible=FALSE,
                             columns=list(
                                 list(
                                     `name`="var", 
@@ -193,12 +195,10 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="means",
                             title="",
+                            visible="(show_means)",
                             template=jmvcore::Table$new(
                                 options=options,
                                 title="Variable - $key",
-                                clearWith=list(
-                                    "dep",
-                                    "covs"),
                                 columns=list(
                                     list(
                                         `name`="var", 
@@ -239,6 +239,7 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param data .
 #' @param dep .
 #' @param covs .
+#' @param show_means .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$main$coefficients} \tab \tab \tab \tab \tab a table \cr
@@ -252,7 +253,8 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 myRegression <- function(
     data,
     dep,
-    covs) {
+    covs,
+    show_means = FALSE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("myRegression requires jmvcore to be installed (restart may be required)")
@@ -268,7 +270,8 @@ myRegression <- function(
 
     options <- myRegressionOptions$new(
         dep = dep,
-        covs = covs)
+        covs = covs,
+        show_means = show_means)
 
     analysis <- myRegressionClass$new(
         options = options,

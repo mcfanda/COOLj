@@ -42,6 +42,13 @@ Runner <- R6::R6Class(
 
     run_additional_effects=function() {
 
+        ## check the covs ##
+        results      <-   as.data.frame(summary(self$model)$coefficients)
+        results      <-   results[-1,]
+        whichcovs    <-   rownames(results[results[,4]<.05,])
+        if (length(whichcovs)==0) 
+            return(NULL)
+        
       eps       <-  effectsize::epsilon_squared(self$model)
       eps_df    <-  data.frame(var=eps$Parameter,index="Epsilon^2",value=eps$Epsilon2)
       eta       <-  effectsize::eta_squared(self$model)
@@ -62,7 +69,6 @@ Runner <- R6::R6Class(
             s  <- sd(self$analysis$data[[x]],na.rm=TRUE)
             data.frame(var=x,mean=m,sd=s)
         })
-        
         return(tabs)
     },
     run_sig_means=function() {

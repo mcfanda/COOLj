@@ -25,10 +25,9 @@ options:
         - numeric
 
     - name: show_means
-      title: Show Means
+      title: Show Means for Sig.
       type: Bool
       default: false
-
 
 
 

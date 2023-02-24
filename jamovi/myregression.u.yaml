@@ -21,3 +21,8 @@ children:
           - type: VariablesListBox
             name: covs
             isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: show_means

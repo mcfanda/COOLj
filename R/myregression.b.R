@@ -25,10 +25,9 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             
             # set up the effects SmartTable
             atable<-SmartTable$new(self$results$additional$effects,private$.runner)
-            atable$superTitle <- list(es_ci_lower="95% confidence interval",es_ci_upper="95% confidence interval")
-            # put the SmartTable in the list
+            atable$activateOnData <- TRUE
             private$.tables[[length(private$.tables)+1]]<-atable
-
+    
             obj<-SmartArray$new(self$results$means,private$.runner)
             # put the SmartArray in the list
             private$.tables[[length(private$.tables)+1]]<-obj

@@ -11,10 +11,6 @@ items:
            - name: coefficients
              title:  Parameter Estimates (Coefficients)
              type: Table
-             clearWith:
-              - dep
-              - covs
-
              columns:
                     - name: var
                       title: "Variable"
@@ -37,10 +33,6 @@ items:
            - name: anova
              title:  ANOVA table
              type: Table
-             clearWith:
-              - dep
-              - covs
-
              columns:
                     - name: var
                       title: "Variable"
@@ -67,7 +59,7 @@ items:
            - name: effects
              title:  Effect Size Indices
              type: Table
-             visible: true
+             visible: false
              columns:
                     - name: var
                       title: "Variable"
@@ -102,17 +94,15 @@ items:
        - name: sig
          type: Group
          title: Significant covariates
+         visible: (show_means)
          items: 
            - name: means
              title: ""
              type: Array
+             visible: (show_means)
              template:
                 title:  Variable - $key
                 type: Table
-                clearWith:
-                   - dep
-                   - covs
-
                 columns:
                     - name: var
                       title: "Variable"

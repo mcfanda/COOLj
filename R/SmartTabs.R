@@ -123,13 +123,13 @@ SmartTable <- R6::R6Class("SmartTable",
                               
                               if (!self$activated)
                                 return()
-
+                              private$.debug_msg("is activated")
+                              
                               if (utils::hasName(self$table$state,"status") && self$table$state[["status"]]=="complete")
                                 return()
                               
                               private$.phase<-"run"
                               rtable<-private$.getData()
-                              
                               if (is.null(rtable))
                                 return()
                               
@@ -141,7 +141,6 @@ SmartTable <- R6::R6Class("SmartTable",
                                   }
 
                               if (self$expandOnRun) private$.expand(rtable)
-                              
                               private$.fill(self$table,rtable)
                               private$.finalize()
                               
@@ -211,6 +210,7 @@ SmartTable <- R6::R6Class("SmartTable",
                                return(private$.activateOnData) 
                               }
                               private$.activateOnData<-value
+                              self$activated<-value
                               
                             },
                             title=function(aname) {
