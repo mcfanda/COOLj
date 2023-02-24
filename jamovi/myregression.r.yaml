@@ -11,10 +11,6 @@ items:
            - name: coefficients
              title:  Parameter Estimates (Coefficients)
              type: Table
-             clearWith:
-              - dep
-              - covs
-
              columns:
                     - name: var
                       title: "Variable"
@@ -37,10 +33,6 @@ items:
            - name: anova
              title:  ANOVA table
              type: Table
-             clearWith:
-              - dep
-              - covs
-
              columns:
                     - name: var
                       title: "Variable"
@@ -109,10 +101,6 @@ items:
              template:
                 title:  Variable - $key
                 type: Table
-                clearWith:
-                   - dep
-                   - covs
-
                 columns:
                     - name: var
                       title: "Variable"
