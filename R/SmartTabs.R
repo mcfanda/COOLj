@@ -210,7 +210,7 @@ SmartTable <- R6::R6Class("SmartTable",
                                return(private$.activateOnData) 
                               }
                               private$.activateOnData<-value
-                              self$activated<-value
+                              if (isTRUE(value)) self$activated<-TRUE
                               
                             },
                             title=function(aname) {
