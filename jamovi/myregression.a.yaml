@@ -29,6 +29,10 @@ options:
       type: Bool
       default: false
 
+    - name: show_ci
+      title: ES CI
+      type: Bool
+      default: false
 
 
 ...

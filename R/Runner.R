@@ -10,7 +10,7 @@ Runner <- R6::R6Class(
       
       formula  <- jmvcore::composeFormula(self$analysis$options$dep,self$analysis$options$covs)
       self$model    <- stats::lm(formula,data=self$analysis$data)
-      Sys.sleep(3)
+    #  Sys.sleep(3) uncomment this to articially slow down the estimation
       
     },
     
@@ -22,34 +22,42 @@ Runner <- R6::R6Class(
       names(coeffs)    <-   c("coef","se","t","p")
       coeffs$var       <-  rownames(coeffs) 
       return(coeffs)
+      
     },
 
     run_main_anova=function() {
       
       .anova          <-  as.data.frame(car::Anova(self$model,type=3))
-       names(.anova)  <-  c("nothing","df1","test","p")
+      names(.anova)   <-  c("nothing","df1","test","p")
       .anova$df2      <-  self$model$df.residual
-      .anova$var      <-  rownames(.anova) 
+      .anova$var      <-   rownames(.anova)
+      test1            <-   runif(1,0,1)>.5 # we simulate unneeded columns not expected apriori
+      if (test1) .anova$df1 <- Inf
+      test2           <-   runif(1,0,1)>.5
+      if (test2) attr(.anova,"titles")<-list(test="Chi-squares")
       return(.anova)
-       
-      },
+      
+    },
     
+    init_additional_effects=function() {
 
+        covs      <- self$analysis$options$covs
+        es        <- c('\u03b5','\u03b7','\u03c9') ## greek UTF 
+        es        <- paste(es,'\u00B2',sep="")
+        tab       <- as.data.frame(expand.grid(covs,es))
+        names(tab)<- c("var","index")
+        tab       <- tab[order(tab$var),]
+        return(tab)
+    },
+    
     run_additional_effects=function() {
-
-        ## check the covs ##
-        results      <-   as.data.frame(summary(self$model)$coefficients)
-        results      <-   results[-1,]
-        whichcovs    <-   rownames(results[results[,4]<.05,])
-        if (length(whichcovs)==0) 
-            return(NULL)
-        
+      
       eps       <-  effectsize::epsilon_squared(self$model)
-      eps_df    <-  data.frame(var=eps$Parameter,index="Epsilon^2",value=eps$Epsilon2)
+      eps_df    <-  data.frame(var=eps$Parameter,value=eps$Epsilon2)
       eta       <-  effectsize::eta_squared(self$model)
-      eta_df    <-  data.frame(var=eta$Parameter,index="Eta^2",value=eta$Eta2)
+      eta_df    <-  data.frame(var=eta$Parameter,value=eta$Eta2)
       omega     <-  effectsize::omega_squared(self$model)
-      omega_df  <-  data.frame(var=eta$Parameter,index="Omega^2",value=omega$Omega2)
+      omega_df  <-  data.frame(var=eta$Parameter,value=omega$Omega2)
       
       tab       <-  as.data.frame(rbind(eps_df,eta_df,omega_df))
       tab       <-  tab[order(tab$var),]
@@ -80,7 +88,25 @@ Runner <- R6::R6Class(
         })
         attr(tabs,"keys")<-whichcovs
         return(tabs)
+    },
+    init_correlations=function() {
+      
+      vars<-c(self$analysis$options$dep,self$analysis$options$covs)
+      tab<-as.data.frame(matrix(".",nrow = length(vars),ncol=length(vars)))
+      names(tab)  <- vars
+      tab$var     <- vars
+      return(tab)
+      
+    },
+    run_correlations=function() {
+      
+      vars<-c(self$analysis$options$dep,self$analysis$options$covs)
+      tab<-as.data.frame(cor(self$analysis$data[,vars]))
+      return(tab)
+      
     }
+    
+    
     
 
 

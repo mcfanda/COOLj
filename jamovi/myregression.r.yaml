@@ -59,11 +59,12 @@ items:
            - name: effects
              title:  Effect Size Indices
              type: Table
-             visible: false
+             visible: true
              columns:
                     - name: var
                       title: "Variable"
                       type: text
+                      combineBelow: true
                     - name: index
                       title: "Index"
                       type: text
@@ -71,6 +72,14 @@ items:
                       title: "Value"
                       type: number
                       format: zto
+                    - name: es_ci_lower
+                      title: Lower
+                      type: number
+                      visible: (show_ci)
+                    - name: es_ci_upper
+                      title: Upper
+                      type: number
+                      visible: (show_ci)
 
 
        - name: means
@@ -115,5 +124,13 @@ items:
                       type: number
 
 
+       - name: correlations
+         title:  Correlations
+         type: Table
+         visible: true
+         columns:
+                    - name: var
+                      title: "Variable"
+                      type: text
 
 ...

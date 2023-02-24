@@ -8,7 +8,8 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
         initialize = function(
             dep = NULL,
             covs = NULL,
-            show_means = FALSE, ...) {
+            show_means = FALSE,
+            show_ci = FALSE, ...) {
 
             super$initialize(
                 package="COOLj",
@@ -33,19 +34,26 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                 "show_means",
                 show_means,
                 default=FALSE)
+            private$..show_ci <- jmvcore::OptionBool$new(
+                "show_ci",
+                show_ci,
+                default=FALSE)
 
             self$.addOption(private$..dep)
             self$.addOption(private$..covs)
             self$.addOption(private$..show_means)
+            self$.addOption(private$..show_ci)
         }),
     active = list(
         dep = function() private$..dep$value,
         covs = function() private$..covs$value,
-        show_means = function() private$..show_means$value),
+        show_means = function() private$..show_means$value,
+        show_ci = function() private$..show_ci$value),
     private = list(
         ..dep = NA,
         ..covs = NA,
-        ..show_means = NA)
+        ..show_means = NA,
+        ..show_ci = NA)
 )
 
 myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -55,7 +63,8 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
         main = function() private$.items[["main"]],
         additional = function() private$.items[["additional"]],
         means = function() private$.items[["means"]],
-        sig = function() private$.items[["sig"]]),
+        sig = function() private$.items[["sig"]],
+        correlations = function() private$.items[["correlations"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -144,12 +153,13 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="effects",
                             title="Effect Size Indices",
-                            visible=FALSE,
+                            visible=TRUE,
                             columns=list(
                                 list(
                                     `name`="var", 
                                     `title`="Variable", 
-                                    `type`="text"),
+                                    `type`="text", 
+                                    `combineBelow`=TRUE),
                                 list(
                                     `name`="index", 
                                     `title`="Index", 
@@ -158,7 +168,17 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                                     `name`="value", 
                                     `title`="Value", 
                                     `type`="number", 
-                                    `format`="zto"))))}))$new(options=options))
+                                    `format`="zto"),
+                                list(
+                                    `name`="es_ci_lower", 
+                                    `title`="Lower", 
+                                    `type`="number", 
+                                    `visible`="(show_ci)"),
+                                list(
+                                    `name`="es_ci_upper", 
+                                    `title`="Upper", 
+                                    `type`="number", 
+                                    `visible`="(show_ci)"))))}))$new(options=options))
             self$add(jmvcore::Array$new(
                 options=options,
                 name="means",
@@ -211,7 +231,17 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                                     list(
                                         `name`="sd", 
                                         `title`="Sd", 
-                                        `type`="number")))))}))$new(options=options))}))
+                                        `type`="number")))))}))$new(options=options))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="correlations",
+                title="Correlations",
+                visible=TRUE,
+                columns=list(
+                    list(
+                        `name`="var", 
+                        `title`="Variable", 
+                        `type`="text"))))}))
 
 myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "myRegressionBase",
@@ -240,6 +270,7 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param dep .
 #' @param covs .
 #' @param show_means .
+#' @param show_ci .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$main$coefficients} \tab \tab \tab \tab \tab a table \cr
@@ -247,14 +278,22 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$additional$effects} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$means} \tab \tab \tab \tab \tab an array of tables \cr
 #'   \code{results$sig$means} \tab \tab \tab \tab \tab an array \cr
+#'   \code{results$correlations} \tab \tab \tab \tab \tab a table \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$correlations$asDF}
+#'
+#' \code{as.data.frame(results$correlations)}
 #'
 #' @export
 myRegression <- function(
     data,
     dep,
     covs,
-    show_means = FALSE) {
+    show_means = FALSE,
+    show_ci = FALSE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("myRegression requires jmvcore to be installed (restart may be required)")
@@ -271,7 +310,8 @@ myRegression <- function(
     options <- myRegressionOptions$new(
         dep = dep,
         covs = covs,
-        show_means = show_means)
+        show_means = show_means,
+        show_ci = show_ci)
 
     analysis <- myRegressionClass$new(
         options = options,

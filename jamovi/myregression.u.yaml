@@ -26,3 +26,5 @@ children:
     children:
       - type: CheckBox
         name: show_means
+      - type: CheckBox
+        name: show_ci
