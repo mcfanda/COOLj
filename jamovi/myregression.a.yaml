@@ -24,6 +24,10 @@ options:
       permitted:
         - numeric
 
+    - name: show_means
+      title: Show Means
+      type: Bool
+      default: false
 
 
 
