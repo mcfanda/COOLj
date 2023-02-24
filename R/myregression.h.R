@@ -71,9 +71,6 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="coefficients",
                             title="Parameter Estimates (Coefficients)",
-                            clearWith=list(
-                                "dep",
-                                "covs"),
                             columns=list(
                                 list(
                                     `name`="var", 
@@ -101,9 +98,6 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="anova",
                             title="ANOVA table",
-                            clearWith=list(
-                                "dep",
-                                "covs"),
                             columns=list(
                                 list(
                                     `name`="var", 
@@ -196,9 +190,6 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             template=jmvcore::Table$new(
                                 options=options,
                                 title="Variable - $key",
-                                clearWith=list(
-                                    "dep",
-                                    "covs"),
                                 columns=list(
                                     list(
                                         `name`="var", 

@@ -117,7 +117,7 @@ SmartTable <- R6::R6Class("SmartTable",
                             
                             runTable=function() {
                             
-                              private$.debug_msg("checked for run")
+                              private$.debug_msg("checked for run: state",self$table$state)
 
                               private$.clean
                               
@@ -211,6 +211,7 @@ SmartTable <- R6::R6Class("SmartTable",
                                return(private$.activateOnData) 
                               }
                               private$.activateOnData<-value
+                              if (isTRUE(value)) self$activated<-TRUE
                               
                             },
                             title=function(aname) {
@@ -678,7 +679,7 @@ SmartArray <- R6::R6Class("SmartArray",
                             runTable=function() {
 
                               private$.phase<-"run"
-                              private$.debug_msg("checked for run")
+                              private$.debug_msg("checked for run: status",self$table$state)
                               self$retrieveNotes()
                               
                               if (private$.stop()) 
