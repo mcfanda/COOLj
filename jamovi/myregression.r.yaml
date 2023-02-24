@@ -72,7 +72,6 @@ items:
                     - name: var
                       title: "Variable"
                       type: text
-                      combineBelow: true
                     - name: index
                       title: "Index"
                       type: text
@@ -80,77 +79,7 @@ items:
                       title: "Value"
                       type: number
                       format: zto
-                    - name: es_ci_lower
-                      title: Lower
-                      type: number
-                      visible: (show_ci)
-                    - name: es_ci_upper
-                      title: Upper
-                      type: number
-                      visible: (show_ci)
 
 
-       - name: means
-         title: Mean and Standard deviation
-         type: Array
-         items: (covs)
-         clearWith:
-                   - dep
-                   - covs
-
-         template:
-                title:  Variable - $key
-                type: Table
-                clearWith:
-                   - dep
-                   - covs
-
-                columns:
-                    - name: var
-                      title: "Variable"
-                      type: text
-                    - name: mean
-                      title: "Mean"
-                      type: number
-                    - name: sd
-                      title: "Sd"
-                      type: number
-        
-       - name: sig
-         type: Group
-         title: Significant covariates
-         visible: (show_means)
-         items: 
-           - name: means
-             title: ""
-             type: Array
-             visible: (show_means)
-             template:
-                title:  Variable - $key
-                type: Table
-                clearWith:
-                   - dep
-                   - covs
-
-                columns:
-                    - name: var
-                      title: "Variable"
-                      type: text
-                    - name: mean
-                      title: "Mean"
-                      type: number
-                    - name: sd
-                      title: "Sd"
-                      type: number
-                      
-         
-       - name: correlations
-         title:  Correlations
-         type: Table
-         visible: true
-         columns:
-                    - name: var
-                      title: "Variable"
-                      type: text
 
 ...
