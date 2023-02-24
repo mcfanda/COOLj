@@ -53,10 +53,6 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             # execute all SmartTable run functions             
             lapply(private$.tables,function(x) x$runTable())
             
-            jinfo("MODULE:  #### run phase end ####")
-            now<-Sys.time()
-            jinfo("TIME:",now-private$.time," secs")
-            
         }
     )
 )

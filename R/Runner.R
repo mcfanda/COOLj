@@ -77,7 +77,7 @@ Runner <- R6::R6Class(
             s  <- sd(self$analysis$data[[x]],na.rm=TRUE)
             data.frame(var=x,mean=m,sd=s)
         })
-        
+        attr(tabs,"keys")<-whichcovs
         return(tabs)
     }
     

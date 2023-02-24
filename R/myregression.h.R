@@ -193,7 +193,6 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             options=options,
                             name="means",
                             title="",
-                            visible="(show_means)",
                             template=jmvcore::Table$new(
                                 options=options,
                                 title="Variable - $key",
