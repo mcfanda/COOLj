@@ -57,7 +57,6 @@ Runner <- R6::R6Class(
       omega_df  <-  data.frame(var=eta$Parameter,index="Omega^2",value=omega$Omega2)
       
       tab       <-  as.data.frame(rbind(eps_df,eta_df,omega_df))
-      tab       <-  tab[order(tab$var),]
       
       return(tab)
     },
