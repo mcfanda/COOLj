@@ -45,7 +45,8 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
     inherit = jmvcore::Group,
     active = list(
         main = function() private$.items[["main"]],
-        additional = function() private$.items[["additional"]]),
+        additional = function() private$.items[["additional"]],
+        means = function() private$.items[["means"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -154,7 +155,28 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                                     `name`="value", 
                                     `title`="Value", 
                                     `type`="number", 
-                                    `format`="zto"))))}))$new(options=options))}))
+                                    `format`="zto"))))}))$new(options=options))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="means",
+                title="Mean and Standard deviation",
+                items="(covs)",
+                template=jmvcore::Table$new(
+                    options=options,
+                    title="Variable - $key",
+                    columns=list(
+                        list(
+                            `name`="var", 
+                            `title`="Variable", 
+                            `type`="text"),
+                        list(
+                            `name`="mean", 
+                            `title`="Mean", 
+                            `type`="number"),
+                        list(
+                            `name`="sd", 
+                            `title`="Sd", 
+                            `type`="number")))))}))
 
 myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "myRegressionBase",
@@ -187,6 +209,7 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$main$coefficients} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$main$anova} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$additional$effects} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$means} \tab \tab \tab \tab \tab an array of tables \cr
 #' }
 #'
 #' @export

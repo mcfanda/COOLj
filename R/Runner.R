@@ -53,7 +53,19 @@ Runner <- R6::R6Class(
       tab       <-  tab[order(tab$var),]
       
       return(tab)
+    },
+    
+    run_means=function() {
+        
+        tabs  <-  lapply(self$analysis$options$covs, function (x) {
+            m  <- mean(self$analysis$data[[x]],na.rm=TRUE)
+            s  <- sd(self$analysis$data[[x]],na.rm=TRUE)
+            data.frame(var=x,mean=m,sd=s)
+        })
+        
+        return(tabs)
     }
+    
 
 
     

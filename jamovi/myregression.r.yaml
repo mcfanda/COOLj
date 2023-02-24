@@ -81,5 +81,22 @@ items:
                       format: zto
 
 
+       - name: means
+         title: Mean and Standard deviation
+         type: Array
+         items: (covs)
+         template:
+                title:  Variable - $key
+                type: Table
+                columns:
+                    - name: var
+                      title: "Variable"
+                      type: text
+                    - name: mean
+                      title: "Mean"
+                      type: number
+                    - name: sd
+                      title: "Sd"
+                      type: number
 
 ...

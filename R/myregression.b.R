@@ -29,6 +29,10 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             # put the SmartTable in the list
             private$.tables[[length(private$.tables)+1]]<-atable
 
+            obj<-SmartArray$new(self$results$means,private$.runner)
+            # put the SmartArray in the list
+            private$.tables[[length(private$.tables)+1]]<-obj
+            
 
             # init all tables
             lapply(private$.tables,function(x) x$initTable())
