@@ -13,6 +13,13 @@ Runner <- R6::R6Class(
     #  Sys.sleep(3) uncomment this to articially slow down the estimation
       
     },
+    init_main_coefficients=function() {
+      
+      covs      <- self$analysis$options$covs
+      terms     <- c("(Intercept)",covs)
+      tab       <- lapply(terms, function(x) list(var=x))
+      return(tab)
+    },
     
     run_main_coefficients=function() {
       
@@ -25,18 +32,23 @@ Runner <- R6::R6Class(
       
     },
 
+    init_main_anova=function() {
+      
+      covs      <- self$analysis$options$covs
+      terms     <- c("(Intercept)",covs,"Residuals")
+      tab       <- lapply(terms, function(x) list(var=x))
+      return(tab)
+    },
+    
     run_main_anova=function() {
-      
+
+            
       .anova          <-  as.data.frame(car::Anova(self$model,type=3))
-      names(.anova)   <-  c("nothing","df1","test","p")
+      names(.anova)  <-  c("nothing","df1","test","p")
       .anova$df2      <-  self$model$df.residual
-      .anova$var      <-   rownames(.anova)
-      test1            <-   runif(1,0,1)>.5 # we simulate unneeded columns not expected apriori
-      if (test1) .anova$df1 <- Inf
-      test2           <-   runif(1,0,1)>.5
-      if (test2) attr(.anova,"titles")<-list(test="Chi-squares")
+      .anova$var      <-  rownames(.anova)
+      Sys.sleep(3) ## simulate a slow computation
       return(.anova)
-      
     },
     
     init_additional_effects=function() {
