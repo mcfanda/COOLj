@@ -10,14 +10,10 @@ Runner <- R6::R6Class(
       
       formula  <- jmvcore::composeFormula(self$analysis$options$dep,self$analysis$options$covs)
       self$model    <- stats::lm(formula,data=self$analysis$data)
+      Sys.sleep(3)
       
-      self$warning<-list(topic="main_coefficients",
-                                     message="Something great happened in the estimate function")
-      self$error<-list(topic="main_anova",
-                       message="Something bad happened in the estimate function")
-
     },
-
+    
     run_main_coefficients=function() {
       
       .summary         <-   summary(self$model)
@@ -25,7 +21,6 @@ Runner <- R6::R6Class(
       coeffs           <-   as.data.frame(coeffs)
       names(coeffs)    <-   c("coef","se","t","p")
       coeffs$var       <-  rownames(coeffs) 
-      warning("something fishy is going on")
       return(coeffs)
     },
 
