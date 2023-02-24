@@ -64,6 +64,21 @@ Runner <- R6::R6Class(
         })
         
         return(tabs)
+    },
+    run_sig_means=function() {
+        ## select the covs ##
+        results      <-   as.data.frame(summary(self$model)$coefficients)
+        results      <-   results[-1,]
+        whichcovs    <-   rownames(results[results[,4]<.05,])
+        
+        ## make the tables
+        tabs     <-  lapply(whichcovs, function (x) {
+            m  <- mean(self$analysis$data[[x]],na.rm=TRUE)
+            s  <- sd(self$analysis$data[[x]],na.rm=TRUE)
+            data.frame(var=x,mean=m,sd=s)
+        })
+        
+        return(tabs)
     }
     
 

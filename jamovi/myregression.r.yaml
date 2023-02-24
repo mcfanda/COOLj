@@ -99,4 +99,33 @@ items:
                       title: "Sd"
                       type: number
 
+       - name: sig
+         type: Group
+         title: Significant covariates
+         visible: (show_means)
+         items: 
+           - name: means
+             title: ""
+             type: Array
+             visible: (show_means)
+             template:
+                title:  Variable - $key
+                type: Table
+                clearWith:
+                   - dep
+                   - covs
+
+                columns:
+                    - name: var
+                      title: "Variable"
+                      type: text
+                    - name: mean
+                      title: "Mean"
+                      type: number
+                    - name: sd
+                      title: "Sd"
+                      type: number
+
+
+
 ...

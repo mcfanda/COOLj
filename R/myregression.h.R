@@ -46,7 +46,8 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
     active = list(
         main = function() private$.items[["main"]],
         additional = function() private$.items[["additional"]],
-        means = function() private$.items[["means"]]),
+        means = function() private$.items[["means"]],
+        sig = function() private$.items[["sig"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -176,7 +177,42 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                         list(
                             `name`="sd", 
                             `title`="Sd", 
-                            `type`="number")))))}))
+                            `type`="number")))))
+            self$add(R6::R6Class(
+                inherit = jmvcore::Group,
+                active = list(
+                    means = function() private$.items[["means"]]),
+                private = list(),
+                public=list(
+                    initialize=function(options) {
+                        super$initialize(
+                            options=options,
+                            name="sig",
+                            title="Significant covariates")
+                        self$add(jmvcore::Array$new(
+                            options=options,
+                            name="means",
+                            title="",
+                            visible="(show_means)",
+                            template=jmvcore::Table$new(
+                                options=options,
+                                title="Variable - $key",
+                                clearWith=list(
+                                    "dep",
+                                    "covs"),
+                                columns=list(
+                                    list(
+                                        `name`="var", 
+                                        `title`="Variable", 
+                                        `type`="text"),
+                                    list(
+                                        `name`="mean", 
+                                        `title`="Mean", 
+                                        `type`="number"),
+                                    list(
+                                        `name`="sd", 
+                                        `title`="Sd", 
+                                        `type`="number")))))}))$new(options=options))}))
 
 myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "myRegressionBase",
@@ -210,6 +246,7 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$main$anova} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$additional$effects} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$means} \tab \tab \tab \tab \tab an array of tables \cr
+#'   \code{results$sig$means} \tab \tab \tab \tab \tab an array \cr
 #' }
 #'
 #' @export
