@@ -1,6 +1,6 @@
-j_DEBUG <- T
-j_INFO  <- T
-t_INFO  <- T
+j_DEBUG <- TRUE
+j_INFO  <- TRUE
+t_INFO  <- TRUE
 
 TRANS_WARNS <- NULL
 #### Helper functions used by Scaffold (not exported)

@@ -6,17 +6,16 @@ Runner <- R6::R6Class(
   public=list(
     analysis=NULL,
     model=NULL,
-    dispatcher=NULL,
-    
-    initialize=function(obj) {
-      self$analysis<-obj
-      self$dispatcher<-Dispatch$new(obj$results)
-    },
-    
     estimate=function() {
       
       formula  <- jmvcore::composeFormula(self$analysis$options$dep,self$analysis$options$covs)
       self$model    <- stats::lm(formula,data=self$analysis$data)
+      
+      self$warning<-list(topic="main_coefficients",
+                                     message="Something great happened in the estimate function")
+      self$error<-list(topic="main_anova",
+                       message="Something bad happened in the estimate function")
+
     },
 
     run_main_coefficients=function() {
@@ -26,6 +25,7 @@ Runner <- R6::R6Class(
       coeffs           <-   as.data.frame(coeffs)
       names(coeffs)    <-   c("coef","se","t","p")
       coeffs$var       <-  rownames(coeffs) 
+      warning("something fishy is going on")
       return(coeffs)
     },
 
