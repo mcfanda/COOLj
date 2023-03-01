@@ -1,8 +1,7 @@
-j_DEBUG <- TRUE
-j_INFO  <- TRUE
-t_INFO  <- TRUE
+j_DEBUG <- T
+j_INFO  <- T
+t_INFO  <- T
 
-TRANS_WARNS <- NULL
 #### Helper functions used by Scaffold (not exported)
 
 tinfo <- function(...) {
@@ -61,7 +60,7 @@ is.there<-function(pattern,string) length(grep(pattern,string,fixed=T))>0
 
 try_hard<-function(exp) {
 
-  .results<-list(error=FALSE,warning=FALSE,message=FALSE,obj=FALSE)
+  .results<-list(error=FALSE,warning=list(),message=FALSE,obj=FALSE)
   
   .results$obj <- withCallingHandlers(
     tryCatch(exp, error=function(e) {
@@ -70,7 +69,7 @@ try_hard<-function(exp) {
       .results$error<<-conditionMessage(e)
       NULL
     }), warning=function(w) {
-      .results$warning<<-conditionMessage(w)
+      .results$warning[[length(.results$warning)+1]]<<-conditionMessage(w)
       invokeRestart("muffleWarning")
     }, message = function(m) {
       .results$message<<-conditionMessage(m)
@@ -84,6 +83,8 @@ try_hard<-function(exp) {
                mark("ERROR:")
                mark(.results$error)
   }
+ if(length(.results$warning)==0) .results$warning<-FALSE
+ if(length(.results$warning)==1) .results$warning<-.results$warning[[1]]
   
 
   return(.results)
@@ -175,7 +176,7 @@ smartTableName<-function(root,alist,end=NULL) {
 
 transnames<-function(original,ref) {
   unlist(lapply(original,function(x) {
-    i<-names(ref)[sapply(ref,function(y) any(y %in% x))]
+    i<-names(ref)[sapply(ref,function(y) any(y %in% trimws(x)))]
     ifelse(length(i)>0,i,x)
   }))
 }

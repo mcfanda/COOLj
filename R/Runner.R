@@ -26,6 +26,7 @@ Runner <- R6::R6Class(
       names(coeffs)    <-   c("coef","se","t","p")
       coeffs$var       <-  rownames(coeffs) 
       warning("something fishy is going on")
+      
       return(coeffs)
     },
 
@@ -35,6 +36,7 @@ Runner <- R6::R6Class(
        names(.anova)  <-  c("nothing","df1","test","p")
       .anova$df2      <-  self$model$df.residual
       .anova$var      <-  rownames(.anova) 
+
       return(.anova)
        
       },
@@ -57,7 +59,7 @@ Runner <- R6::R6Class(
       omega_df  <-  data.frame(var=eta$Parameter,index="Omega^2",value=omega$Omega2)
       
       tab       <-  as.data.frame(rbind(eps_df,eta_df,omega_df))
-      
+  
       return(tab)
     },
     
