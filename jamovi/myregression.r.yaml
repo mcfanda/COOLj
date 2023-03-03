@@ -68,6 +68,10 @@ items:
              title:  Effect Size Indices
              type: Table
              visible: true
+             clearWith:
+                     - show_ci
+                     - dep
+                     - covs
              columns:
                     - name: var
                       title: "Variable"

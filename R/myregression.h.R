@@ -160,6 +160,10 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                             name="effects",
                             title="Effect Size Indices",
                             visible=TRUE,
+                            clearWith=list(
+                                "show_ci",
+                                "dep",
+                                "covs"),
                             columns=list(
                                 list(
                                     `name`="var", 

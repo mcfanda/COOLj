@@ -47,7 +47,6 @@ Runner <- R6::R6Class(
       names(.anova)  <-  c("nothing","df1","test","p")
       .anova$df2      <-  self$model$df.residual
       .anova$var      <-  rownames(.anova)
-      Sys.sleep(3) ## simulate a slow computation
       return(.anova)
     },
     
@@ -70,7 +69,20 @@ Runner <- R6::R6Class(
       eta_df    <-  data.frame(var=eta$Parameter,value=eta$Eta2)
       omega     <-  effectsize::omega_squared(self$model)
       omega_df  <-  data.frame(var=eta$Parameter,value=omega$Omega2)
-      
+      if (self$options$show_ci) {
+                      x<-rnorm(10)
+                      y<-rnorm(10)
+                      dat<-effectsize::epsilon_squared(self$model,ci = .95, alternative="two.sided")
+                      eps_df$es_ci_lower<-dat$CI_low
+                      eps_df$es_ci_upper<-dat$CI_high
+                      dat<-effectsize::eta_squared(self$model,ci = .95, alternative="two.sided")
+                      eta_df$es_ci_lower<-dat$CI_low
+                      eta_df$es_ci_upper<-dat$CI_high
+                      dat<-effectsize::omega_squared(self$model,ci = .95, alternative="two.sided")
+                      omega_df$es_ci_lower<-dat$CI_low
+                      omega_df$es_ci_upper<-dat$CI_high
+                      
+      }
       tab       <-  as.data.frame(rbind(eps_df,eta_df,omega_df))
       tab       <-  tab[order(tab$var),]
       
