@@ -88,6 +88,13 @@ Runner <- R6::R6Class(
       
       return(tab)
     },
+
+    init_means=function() {
+      
+      covs      <- self$analysis$options$covs
+      tab       <- lapply(covs, function(x) list(var=x))
+      return(tab)
+    },
     
     run_means=function() {
         
@@ -99,6 +106,7 @@ Runner <- R6::R6Class(
         return(tabs)
     },
     run_sig_means=function() {
+        jinfo("RUNNER: run_sig_mean run")
         ## select the covs ##
         results      <-   as.data.frame(summary(self$model)$coefficients)
         results      <-   results[-1,]

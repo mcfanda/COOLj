@@ -40,12 +40,11 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             obj<-SmartArray$new(self$results$sig$means,private$.runner)
             # put the SmartArray in the list
             private$.tables[[length(private$.tables)+1]]<-obj
-            
             obj<-SmartTable$new(self$results$correlations,private$.runner)
             obj$expandOnInit  <- TRUE
             obj$expandFrom    <- 2
             private$.tables[[length(private$.tables)+1]]<-obj
-            
+
             
             # init all tables
             lapply(private$.tables,function(x) x$initTable())
@@ -56,11 +55,17 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             if (!is.something(self$options$dep) | !is.something(self$options$covs))
                 return()
             jinfo("MODULE:  #### run phase start ####")
+
+            mark(self$results$means$isFilled())
+            mark(self$results$means$itemNames)
+            for (o in self$results$means$items)
+                 mark(o$isFilled())
             
             # estimate the model             
             private$.runner$estimate()
             # execute all SmartTable run functions             
             lapply(private$.tables,function(x) x$runTable())
+            
             
         }
     )

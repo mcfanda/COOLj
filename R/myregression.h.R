@@ -223,7 +223,11 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                         super$initialize(
                             options=options,
                             name="sig",
-                            title="Significant covariates")
+                            title="Significant covariates",
+                            clearWith=list(
+                    "dep",
+                    "covs",
+                    "show_means"))
                         self$add(jmvcore::Array$new(
                             options=options,
                             name="means",

@@ -92,7 +92,6 @@ SmartTable <- R6::R6Class("SmartTable",
                               private$.setColumnTitle()
                               private$.ci()
                               self$title
-                              self$table$setState(list(status="checked"))
 
                               ### fill with initial values###
 
@@ -111,27 +110,32 @@ SmartTable <- R6::R6Class("SmartTable",
                               private$.spaceBy()
                               ## in case is a go, the table may be invisible (if activatedOnData). turn visibility on
                               self$table$setVisible(TRUE)
-                              self$table$setState(list(status="inited"))
                               private$.debug_msg("inited")
                             },
                             
                             runTable=function() {
                             
-                              private$.debug_msg("checked for run: state",self$table$state)
+                              private$.debug_msg("checked for run")
 
                               private$.clean
                               
-                              if (!self$activated)
+                              if (!self$activated) {
+                                private$.debug_msg("Not run Not activated")
                                 return()
-
-                              if (utils::hasName(self$table$state,"status") && self$table$state[["status"]]=="complete")
-                                return()
+                              }
                               
+                              if (self$table$isFilled() && self$table$rowCount>0) {
+                                  private$.debug_msg("Not run: protBuff available")
+                                  return()
+                              }
+
                               private$.phase<-"run"
                               rtable<-private$.getData()
                               
-                              if (is.null(rtable))
-                                return()
+                              if (is.null(rtable)) {
+                                  private$.debug_msg("Not run: not filling data")
+                                  return()
+                              }
                               
                               ### check if new column titles are passed
                               .attr <- private$.getAttributes(rtable)
@@ -146,9 +150,7 @@ SmartTable <- R6::R6Class("SmartTable",
                               private$.finalize()
                               
                               private$.debug_msg("run")
-                              if (utils::hasName(self$table$state,"status") && self$table$state[["status"]]=="inited")
-                                          self$table$setState(list(status="complete"))
-                              
+
                             },
                             
                             ci=function(aroot,width=95,label=NULL,format="{}% Confidence Intervals"){
@@ -670,11 +672,13 @@ SmartArray <- R6::R6Class("SmartArray",
                             runTable=function() {
 
                               private$.phase<-"run"
-                              private$.debug_msg("checked for run: status",self$table$state)
+                              private$.debug_msg("checked for run")
                               self$retrieveNotes()
                               
-                              if (private$.stop()) 
-                                return()
+                              if (private$.stop()) {
+                                  private$.debug_msg("not run: filled or empty")
+                                  return()
+                              }
                               
                               
                               rtables<-private$.getData()
@@ -693,13 +697,10 @@ SmartArray <- R6::R6Class("SmartArray",
                                  }
                              }
                               private$.debug_msg("run")
-
-                              self$table$setState(list(status="complete"))
                             },
                             retrieveNotes=function() {
                               
                               for (child in self$childrenObjs) {
-                                    child$table$setState(self$table$state)
                                     child$retrieveNotes()
                               }
                               
@@ -724,7 +725,7 @@ SmartArray <- R6::R6Class("SmartArray",
                               } else {
                                 
                                 fun<-private$.run_source
-                                filled<-!self$table$isNotFilled()
+                                filled<-(self$table$isFilled() && is.something(self$table$items))
                               }
                               
                               if (is.null(fun)) 
@@ -733,9 +734,6 @@ SmartArray <- R6::R6Class("SmartArray",
                               if (is.character(fun))
                                 if (!(fun %in% names(private$.estimator))) 
                                   return(TRUE)
-                              
-                              if (is.something(self$table$state) && self$table$state[["status"]]!="mother")
-                                   return(FALSE)
                               
                               return(filled)
                               

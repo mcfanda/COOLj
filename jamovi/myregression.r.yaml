@@ -120,6 +120,10 @@ items:
          type: Group
          title: Significant covariates
          visible: (show_means)
+         clearWith:
+            - dep
+            - covs
+            - show_means
          items: 
            - name: means
              title: ""
