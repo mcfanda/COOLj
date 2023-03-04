@@ -26,6 +26,9 @@ Runner <- R6::R6Class(
       names(coeffs)    <-   c("coef","se","t","p")
       coeffs$var       <-  rownames(coeffs) 
       warning("something fishy is going on")
+      warning("Some strange warning: the reason is missing value")
+      warning("A complete difficult sentence")
+      warning("Your version of R is not 1.1.1")
       
       return(coeffs)
     },
@@ -36,7 +39,10 @@ Runner <- R6::R6Class(
        names(.anova)  <-  c("nothing","df1","test","p")
       .anova$df2      <-  self$model$df.residual
       .anova$var      <-  rownames(.anova) 
-
+      warning("Some strange warning: the reason is missing value")
+      warning("A complete difficult sentence")
+      warning("Your version of R is not 1.1.1")
+      
       return(.anova)
        
       },

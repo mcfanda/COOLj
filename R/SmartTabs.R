@@ -298,17 +298,21 @@ SmartTable <- R6::R6Class("SmartTable",
                                   return()
                                 }
                                 if (!isFALSE(warning)) {
-                                    l<-length(warning)
-                                    if (l>5) warning<-warning[(l-4):l]
-                                    
+                                  
                                     if (inherits(self$table,"Table")) 
-                                      for (w in warning)
-                                         self$table$setNote(jmvcore::toB64(w),w,init=FALSE)
+                                      for (w in warning) {
+                                        w<-private$.translate_notes(w)
+                                        if (is.something(w))
+                                            self$table$setNote(jmvcore::toB64(w),w,init=FALSE)
+                                      }
                                       
                                     if (inherits(self$table,"Array"))
                                       for (obj in self$table$items)
-                                          for (w in warning)
-                                              obj$setNote(jmvcore::toB64(w),w,init=FALSE)
+                                          for (w in warning) {
+                                              w<-private$.translate_notes(w)
+                                              if (is.something(w))
+                                                      obj$setNote(jmvcore::toB64(w),w,init=FALSE)
+                                          }
 
                                 }
                                 return(rtable) 
@@ -739,6 +743,21 @@ SmartArray <- R6::R6Class("SmartArray",
                               
                               return(filled)
                               
+                            },
+                            .translate_notes=function(msg) {
+                              
+                                if (!exists("TRANS_WARNS")) return(msg)
+                                
+                                where<-unlist(lapply(TRANS_WARNS,function(x) length(grep(x$original,msg))>0))
+                                where<-which(where)
+                                mark(where)
+                                if (is.something(where))
+                                  if (is.something(TRANS_WARNS[[where]]$new))
+                                    msg<-gsub(TRANS_WARNS[[where]]$original,TRANS_WARNS[[where]]$new,msg,fixed=T)
+                                else
+                                  msg<-NULL
+                                
+                                return(msg)
                             }
                             
                             
