@@ -51,7 +51,6 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             private$.runner$estimate()
             # execute all SmartTable run functions             
             lapply(private$.tables,function(x) x$runTable())
-            
         }
     )
 )
