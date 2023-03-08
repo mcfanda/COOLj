@@ -10,7 +10,7 @@ Runner <- R6::R6Class(
       
       formula  <- jmvcore::composeFormula(self$analysis$options$dep,self$analysis$options$covs)
       self$model    <- stats::lm(formula,data=self$analysis$data)
-    #  Sys.sleep(3) uncomment this to articially slow down the estimation
+      Sys.sleep(3) #uncomment this to articially slow down the estimation
       
     },
     init_main_coefficients=function() {
@@ -18,6 +18,7 @@ Runner <- R6::R6Class(
       covs      <- self$analysis$options$covs
       terms     <- c("(Intercept)",covs)
       tab       <- lapply(terms, function(x) list(var=x))
+      self$warning<-list(topic="main_coefficients",message="wait",initOnly=TRUE)
       return(tab)
     },
     

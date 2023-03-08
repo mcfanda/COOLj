@@ -38,11 +38,13 @@ Dispatch <- R6::R6Class(
                                 if (!is.something(table)) stop("SCAFFOLD: a message was sent to a non-existing result object: ",obj$topic)
                                 state<-as.list(table$state)
                                 if (!hasName(obj,"key")) obj$key<-jmvcore::toB64(obj$message)
+                                mark("sending",obj)
                                 
                                 obj$message<-private$.translate(obj$message)
                                 
                                 if (is.null(obj$message))
                                   return()
+                                mark("sending2",obj)
                                 
                                 if (exists("fromb64")) obj$message<-fromb64(obj$message)
                                 
@@ -53,17 +55,17 @@ Dispatch <- R6::R6Class(
                                   return()
                                 }
                                 init<-(hasName(obj,"initOnly") && obj[["initOnly"]]) 
-                                
-                                .fun<-function(table,id,msg,init) {
+                                mark("sending",obj,init)
+                                .fun<-function(table,key,msg,init) {
                                   
                                   if (table$.has("items"))
                                     for (x in table$items)
-                                      .fun(x,id,msg,init)
+                                      .fun(x,key,msg,init)
                                   else
                                     table$setNote(obj$key,obj$message,init=init)
                                   
                                 }  
-                                .fun(table,obj$id,obj$message,init)
+                                .fun(table,obj$key,obj$message,init)
                                 
                                
                         },
@@ -122,11 +124,12 @@ Dispatch <- R6::R6Class(
                           where<-unlist(lapply(TRANS_WARNS,function(x) length(grep(x$original,msg))>0))
                           where<-which(where)
                           
-                          if (is.something(where))
+                          if (is.something(where)) {
                             if (is.something(TRANS_WARNS[[where]]$new))
-                              msg<-gsub(TRANS_WARNS[[where]]$original,TRANS_WARNS[[where]]$new,msg,fixed=T)
-                          else
-                            msg<-NULL
+                                 msg<-gsub(TRANS_WARNS[[where]]$original,TRANS_WARNS[[where]]$new,msg,fixed=T)
+                              else
+                                 msg<-NULL
+                          }
                           
                           return(msg)
                           
