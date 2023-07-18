@@ -34,5 +34,9 @@ options:
       type: Bool
       default: false
 
+    - name: newdata
+      title: Save data
+      type: Output            
+      initInRun: true
 
 ...

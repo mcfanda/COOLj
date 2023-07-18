@@ -87,6 +87,8 @@ Runner <- R6::R6Class(
             data.frame(var=x,mean=m,sd=s)
         })
         attr(tabs,"keys")<-whichcovs
+        
+
         return(tabs)
     },
     init_correlations=function() {

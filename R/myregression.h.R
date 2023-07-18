@@ -38,22 +38,27 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                 "show_ci",
                 show_ci,
                 default=FALSE)
+            private$..newdata <- jmvcore::OptionOutput$new(
+                "newdata")
 
             self$.addOption(private$..dep)
             self$.addOption(private$..covs)
             self$.addOption(private$..show_means)
             self$.addOption(private$..show_ci)
+            self$.addOption(private$..newdata)
         }),
     active = list(
         dep = function() private$..dep$value,
         covs = function() private$..covs$value,
         show_means = function() private$..show_means$value,
-        show_ci = function() private$..show_ci$value),
+        show_ci = function() private$..show_ci$value,
+        newdata = function() private$..newdata$value),
     private = list(
         ..dep = NA,
         ..covs = NA,
         ..show_means = NA,
-        ..show_ci = NA)
+        ..show_ci = NA,
+        ..newdata = NA)
 )
 
 myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -64,7 +69,8 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
         additional = function() private$.items[["additional"]],
         means = function() private$.items[["means"]],
         sig = function() private$.items[["sig"]],
-        correlations = function() private$.items[["correlations"]]),
+        correlations = function() private$.items[["correlations"]],
+        newdata = function() private$.items[["newdata"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -241,7 +247,11 @@ myRegressionResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                     list(
                         `name`="var", 
                         `title`="Variable", 
-                        `type`="text"))))}))
+                        `type`="text"))))
+            self$add(jmvcore::Output$new(
+                options=options,
+                name="newdata",
+                varTitle="q"))}))
 
 myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "myRegressionBase",
@@ -279,6 +289,7 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$means} \tab \tab \tab \tab \tab an array of tables \cr
 #'   \code{results$sig$means} \tab \tab \tab \tab \tab an array \cr
 #'   \code{results$correlations} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$newdata} \tab \tab \tab \tab \tab an output \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:

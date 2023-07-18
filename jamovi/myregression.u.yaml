@@ -28,3 +28,5 @@ children:
         name: show_means
       - type: CheckBox
         name: show_ci
+      - type: Output
+        name: newdata

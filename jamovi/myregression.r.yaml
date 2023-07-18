@@ -133,4 +133,9 @@ items:
                       title: "Variable"
                       type: text
 
+
+       - name: newdata
+         type: Output    
+         varTitle: 'q'
+
 ...

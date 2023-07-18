@@ -62,6 +62,12 @@ myRegressionClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             # execute all SmartTable run functions             
             lapply(private$.tables,function(x) x$runTable())
             
+            pdf<-data.frame(a=1:10,b=1:10, y33=1:10)
+            self$results$newdata$set(1:ncol(pdf),
+                                  names(pdf),
+                                  rep("Predicted",ncol(pdf)),
+                                  rep("continuous",ncol(pdf)))
+            self$results$newdata$setValues(pdf)
         }
     )
 )

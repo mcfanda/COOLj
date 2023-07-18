@@ -22,7 +22,24 @@ Dispatch <- R6::R6Class(
                                  print(private$.warnings)
                                  print(private$.errors)
       
+                        },
+                        translate=function(msg) {
+                          
+                          if (!exists("TRANS_WARNS")) return(msg)
+                          
+                          where<-unlist(lapply(TRANS_WARNS,function(x) length(grep(x$original,msg))>0))
+                          where<-which(where)
+                          
+                          if (is.something(where)) {
+                            if (length(where)>1) where<-where[[1]]
+                            if (is.something(TRANS_WARNS[[where]]$new))
+                              msg<-gsub(TRANS_WARNS[[where]]$original,TRANS_WARNS[[where]]$new,msg,fixed=T)
+                            else
+                              msg<-NULL
+                          }                  
+                          return(msg)                          
                         }
+                        
                         ),
             active=list(
                         warnings=function(obj) {
@@ -39,7 +56,12 @@ Dispatch <- R6::R6Class(
                                 state<-as.list(table$state)
                                 if (!hasName(obj,"key")) obj$key<-jmvcore::toB64(obj$message)
                                 
-                                obj$message<-private$.translate(obj$message)
+                                obj$message<-self$translate(obj$message)
+                                
+                                if (is.null(obj$message))
+                                  return()
+                                
+                                if (exists("fromb64")) obj$message<-fromb64(obj$message)
                                 
                                 if (inherits(table,"Html")) {
                                   content<-table$content
@@ -47,12 +69,19 @@ Dispatch <- R6::R6Class(
                                   table$setVisible(TRUE)
                                   return()
                                 }
-                          
-                               init<-(hasName(obj,"initOnly") && obj[["initOnly"]]) 
-                               table$setNote(obj$key,obj$message,init=init)
-                              
-                               
-                               
+                                init<-(hasName(obj,"initOnly") && obj[["initOnly"]]) 
+                                
+                                .fun<-function(table,id,msg,init) {
+                                  
+                                  if (table$.has("items"))
+                                    for (x in table$items)
+                                      .fun(x,id,msg,init)
+                                  else
+                                    table$setNote(obj$key,obj$message,init=init)
+                                  
+                                }  
+                                .fun(table,obj$id,obj$message,init)
+                                
                                
                         },
                         errors=function(obj) {
@@ -70,7 +99,7 @@ Dispatch <- R6::R6Class(
                                if (is.null(obj$message) || obj$message==FALSE)
                                     return()
           
-                               obj$message<-private$.translate(obj$message)
+                               obj$message<-self$translate(obj$message)
                           
                                if (hasName(obj,"final") && (obj$final))
                                    stop(obj$message)
@@ -82,8 +111,7 @@ Dispatch <- R6::R6Class(
                        },
                        warnings_topics=function() {return(names(private$.warnings))},
                        errors_topics=function() {return(names(private$.errors))}
-        
-        
+                      
             ),
             private = list(
                       .warnings=list(),
@@ -102,15 +130,7 @@ Dispatch <- R6::R6Class(
                         else
                              return(NULL)
                         
-                      },
-                      .translate=function(msg) {
-      
-                            for (w in TRANS_WARNS) {
-                                 msg<-gsub(w$original,w$new,msg,fixed=T)
-                            }
-                           return(msg)
-
-                       }
+                      }
                        
             ) #end of private
 ) #end of class
