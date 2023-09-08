@@ -8,7 +8,17 @@ jas: '1.2'
 options:
     - name: data
       type: Data
-      
+
+    - name: mode
+      title: Analysis Mode
+      type: List
+      options:
+             - name: mode1
+               title: Mode 1
+             - name: mode2
+               title: Mode 2
+      default: mode1
+
     - name: dep
       title: Dependent Variable
       type: Variable

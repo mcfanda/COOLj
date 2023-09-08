@@ -6,6 +6,7 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
+            mode = "mode1",
             dep = NULL,
             covs = NULL,
             show_means = FALSE,
@@ -17,6 +18,13 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                 requiresData=TRUE,
                 ...)
 
+            private$..mode <- jmvcore::OptionList$new(
+                "mode",
+                mode,
+                options=list(
+                    "mode1",
+                    "mode2"),
+                default="mode1")
             private$..dep <- jmvcore::OptionVariable$new(
                 "dep",
                 dep,
@@ -41,6 +49,7 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
             private$..newdata <- jmvcore::OptionOutput$new(
                 "newdata")
 
+            self$.addOption(private$..mode)
             self$.addOption(private$..dep)
             self$.addOption(private$..covs)
             self$.addOption(private$..show_means)
@@ -48,12 +57,14 @@ myRegressionOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
             self$.addOption(private$..newdata)
         }),
     active = list(
+        mode = function() private$..mode$value,
         dep = function() private$..dep$value,
         covs = function() private$..covs$value,
         show_means = function() private$..show_means$value,
         show_ci = function() private$..show_ci$value,
         newdata = function() private$..newdata$value),
     private = list(
+        ..mode = NA,
         ..dep = NA,
         ..covs = NA,
         ..show_means = NA,
@@ -270,13 +281,15 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 revision = revision,
                 pause = NULL,
                 completeWhenFilled = FALSE,
-                requiresMissings = FALSE)
+                requiresMissings = FALSE,
+                weightsSupport = 'none')
         }))
 
 #' Regression analysis
 #'
 #' 
 #' @param data .
+#' @param mode .
 #' @param dep .
 #' @param covs .
 #' @param show_means .
@@ -301,6 +314,7 @@ myRegressionBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @export
 myRegression <- function(
     data,
+    mode = "mode1",
     dep,
     covs,
     show_means = FALSE,
@@ -319,6 +333,7 @@ myRegression <- function(
 
 
     options <- myRegressionOptions$new(
+        mode = mode,
         dep = dep,
         covs = covs,
         show_means = show_means,
